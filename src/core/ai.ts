@@ -1,4 +1,5 @@
 import OpenAI from "openai";
+import { SYSTEMS } from "./systems";
 
 export async function chatWithDeepSeek(
   openai: OpenAI,
@@ -8,10 +9,7 @@ export async function chatWithDeepSeek(
     const response = await openai.chat.completions.create({
       model: "deepseek-chat",
       messages: [
-        {
-          role: "system",
-          content: "你是一个友好的QQ机器人助手,请用简洁、友好的方式回复用户。",
-        },
+        ...SYSTEMS,
         {
           role: "user",
           content: message,
