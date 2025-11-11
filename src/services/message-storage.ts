@@ -1,4 +1,4 @@
-import type Redis from "ioredis";
+import type { MemoryStorage } from "./memory-storage";
 
 export interface GroupMessage {
   message_id: string;
@@ -10,12 +10,12 @@ export interface GroupMessage {
 }
 
 export class MessageStorageService {
-  private redis: Redis;
+  private redis: MemoryStorage;
   private readonly MESSAGE_KEY_PREFIX = "qq:group:messages:";
   private readonly STATS_KEY_PREFIX = "qq:group:stats:";
   private readonly MESSAGE_EXPIRY = 60 * 60 * 24 * 7; // 7天过期
 
-  constructor(redis: Redis) {
+  constructor(redis: MemoryStorage) {
     this.redis = redis;
   }
 

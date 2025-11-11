@@ -67,9 +67,6 @@ export const bootstrap = () => {
       timestamp: Date.now(),
     });
 
-    // logger.debug("event", JSON.stringify(event));
-    await event.reply("1");
-    return;
     // 增加用户消息计数
     await messageStorage.incrementUserMessageCount(
       event.group_id,

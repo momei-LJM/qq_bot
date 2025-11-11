@@ -18,13 +18,13 @@ export class DailySummaryJob {
    */
   start() {
     // Cron 表达式: 秒 分 时 日 月 周
-    // 0 0 21 * * * = 每天 21:00:00
-    cron.schedule("0 0 21 * * *", async () => {
+    // 0 0 17 * * * = 每天 17:00:00
+    cron.schedule("0 0 17 * * *", async () => {
       console.log("⏰ 开始生成每日群聊总结...");
       await this.runDailySummary();
     });
 
-    console.log("✅ 每日群聊总结任务已启动 (每天 21:00)");
+    console.log("✅ 每日群聊总结任务已启动 (每天 17:00)");
   }
 
   /**
