@@ -14,10 +14,7 @@ async function testMessageStorage() {
     const memoryStorage = new MemoryStorage();
     const messageStorage = new MessageStorageService(
       memoryStorage,
-      path.join(
-        path.dirname(fileURLToPath(new URL(import.meta.url))),
-        "../data/redisData_test.json"
-      )
+      path.join(process.cwd(), "./data/redisData_test.json")
     );
 
     // 测试初始化

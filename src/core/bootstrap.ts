@@ -80,9 +80,8 @@ export const bootstrap = async () => {
 
     // 调用 DeepSeek AI 生成回复
     try {
-      // const aiResponse = await chatWithDeepSeek(openai, event.raw_message);
-      // await event.reply(aiResponse);
-      await event.reply("debug");
+      const aiResponse = await chatWithDeepSeek(openai, event.raw_message);
+      await event.reply(aiResponse);
     } catch (error) {
       logger.error("调用 DeepSeek AI 失败:", error);
       await event.reply("chat failed");

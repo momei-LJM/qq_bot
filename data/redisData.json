@@ -1,0 +1,40 @@
+{
+  "messages": {
+    "D814753662906EED4DE417571B5E8D2F": [
+      {
+        "message_id": "ROBOT1.0_IQLxOOqDNgIz2-YEej24XB4Jmf5afFezi.tkhdhh7ICelHUoGobpjeP8DspTVQvHzP4BFWfLxRLL8x9d1ig5G2Bva2odGGB637lArgXzlR4!",
+        "group_id": "D814753662906EED4DE417571B5E8D2F",
+        "user_id": "E6B6FB64FB1D107F77FD4ECE86B1C2FE",
+        "raw_message": " Apisix",
+        "timestamp": 1762941264873
+      },
+      {
+        "message_id": "ROBOT1.0_IQLxOOqDNgIz2-YEej24XEZ-yu7gNXUAzZ8.jo9I1b0n5RPUfB4PXQo9tPeFFQklTknZSk6WCtf3UGxRVk7wZmBva2odGGB637lArgXzlR4!",
+        "group_id": "D814753662906EED4DE417571B5E8D2F",
+        "user_id": "E6B6FB64FB1D107F77FD4ECE86B1C2FE",
+        "raw_message": " 1",
+        "timestamp": 1762941297997
+      },
+      {
+        "message_id": "ROBOT1.0_IQLxOOqDNgIz2-YEej24XPmKoNM9FDAf07KuDq3dRX0q5uMMBqx-iylUfo1bgPYnATely6AaGY9yLiwvk.AE1hclsWbC0UWJUTUIiah1pFw!",
+        "group_id": "D814753662906EED4DE417571B5E8D2F",
+        "user_id": "E6B6FB64FB1D107F77FD4ECE86B1C2FE",
+        "raw_message": " r",
+        "timestamp": 1762941587128
+      },
+      {
+        "message_id": "ROBOT1.0_IQLxOOqDNgIz2-YEej24XFZ2Nf65sDEhBoX2iUSH4p3jTkrmZXfEJnElvZvI.Wy5zAn24dIsDSoCYAy0bYNalWBva2odGGB637lArgXzlR4!",
+        "group_id": "D814753662906EED4DE417571B5E8D2F",
+        "user_id": "E6B6FB64FB1D107F77FD4ECE86B1C2FE",
+        "raw_message": " n",
+        "timestamp": 1762941595667
+      }
+    ]
+  },
+  "stats": {
+    "D814753662906EED4DE417571B5E8D2F:2025-11-12": {
+      "E6B6FB64FB1D107F77FD4ECE86B1C2FE": 4
+    }
+  },
+  "lastCleanup": 1762941618617
+}

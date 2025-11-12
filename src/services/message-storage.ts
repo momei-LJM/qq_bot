@@ -30,10 +30,7 @@ export class MessageStorageService {
 
   constructor(
     redis: MemoryStorage,
-    storagePath: string = path.join(
-      path.dirname(fileURLToPath(new URL(import.meta.url))),
-      "../data/redisData.json"
-    )
+    storagePath: string = path.join(process.cwd(), "./data/redisData.json")
   ) {
     this.redis = redis;
     this.DATA_FILE_PATH = storagePath;

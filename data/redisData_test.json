@@ -1,0 +1,20 @@
+{
+  "messages": {
+    "test_group_123": [
+      {
+        "message_id": "test_001",
+        "group_id": "test_group_123",
+        "user_id": "test_user_456",
+        "user_name": "测试用户",
+        "raw_message": "这是一条测试消息",
+        "timestamp": 1762941531807
+      }
+    ]
+  },
+  "stats": {
+    "test_group_123:2025-11-12": {
+      "test_user_456": 1
+    }
+  },
+  "lastCleanup": 1762941531808
+}
