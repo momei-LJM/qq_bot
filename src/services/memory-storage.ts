@@ -249,6 +249,89 @@ export class MemoryStorage {
   }
 
   /**
+   * 获取所有匹配模式的键
+   */
+  async keys(pattern: string): Promise<string[]> {
+    const allKeys = new Set<string>();
+
+    // 收集所有键
+    for (const key of this.zsets.keys()) {
+      if (!this.isExpired(key)) {
+        allKeys.add(key);
+      }
+    }
+
+    for (const key of this.hashes.keys()) {
+      if (!this.isExpired(key)) {
+        allKeys.add(key);
+      }
+    }
+
+    // 简单的通配符匹配
+    const regex = new RegExp(pattern.replace(/\*/g, ".*"));
+    return Array.from(allKeys).filter((key) => regex.test(key));
+  }
+
+  /**
+   * 获取有序集合指定范围的成员
+   */
+  async zrange(key: string, start: number, stop: number): Promise<string[]> {
+    if (this.isExpired(key)) {
+      return [];
+    }
+
+    const zset = this.zsets.get(key);
+    if (!zset) {
+      return [];
+    }
+
+    const sorted = Array.from(zset.entries())
+      .sort((a, b) => a[1] - b[1])
+      .map(([member]) => member);
+
+    if (stop === -1) {
+      return sorted.slice(start);
+    }
+    return sorted.slice(start, stop + 1);
+  }
+
+  /**
+   * 设置哈希表字段的值
+   */
+  async hset(key: string, field: string, value: string): Promise<number> {
+    if (this.isExpired(key)) {
+      this.hashes.delete(key);
+    }
+
+    if (!this.hashes.has(key)) {
+      this.hashes.set(key, new Map());
+    }
+
+    const hash = this.hashes.get(key)!;
+    const isNew = !hash.has(field);
+    hash.set(field, value);
+
+    return isNew ? 1 : 0;
+  }
+
+  /**
+   * 删除键
+   */
+  async del(key: string): Promise<number> {
+    let deleted = 0;
+
+    if (this.zsets.delete(key)) {
+      deleted = 1;
+    }
+    if (this.hashes.delete(key)) {
+      deleted = 1;
+    }
+    this.expiries.delete(key);
+
+    return deleted;
+  }
+
+  /**
    * 获取存储统计信息
    */
   getStats(): { zsets: number; hashes: number; expiries: number } {
@@ -275,6 +358,11 @@ class PipelineExecutor {
 
   expire(key: string, seconds: number): this {
     this.commands.push(() => this.storage.expire(key, seconds));
+    return this;
+  }
+
+  hset(key: string, field: string, value: string): this {
+    this.commands.push(() => this.storage.hset(key, field, value));
     return this;
   }
 

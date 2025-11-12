@@ -1,3 +1,3 @@
 import { bootstrap } from "./core/bootstrap.js";
 
-bootstrap();
+bootstrap().catch(console.error);

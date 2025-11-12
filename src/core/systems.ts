@@ -16,7 +16,7 @@ const CONTENTS = [
   "你推荐的博客：https://www.momei.me",
   `${JSON.stringify(
     SANDBOX_USERS
-  )}，这是使用沙箱环境的用户列表，如果用户在这个列表中，请以更幽默和调侃的方式回复他们。`,
+  )}，这是使用沙箱环境的用户列表，如果用户在这个列表中，请以直接见简洁方式回复他们。`,
 ];
 export const SYSTEMS: ChatCompletionSystemMessageParam[] = CONTENTS.map(
   (t) => ({

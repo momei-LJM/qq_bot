@@ -32,13 +32,18 @@ const qBotConfig: Client.Config = {
   mode: ReceiverMode.WEBSOCKET, // WebSocket 连接模式
 };
 
-export const bootstrap = () => {
+export const bootstrap = async () => {
   logger.debug(JSON.stringify(process.env.DEEPSEEK_API_KEY));
   const openai = new OpenAI(openAiConfig);
   const bot = new Bot(qBotConfig);
   // 初始化 Redis 和服务
   const redis = getRedisClient();
   const messageStorage = new MessageStorageService(redis);
+
+  // 初始化消息存储服务（从 JSON 文件加载数据）
+  await messageStorage.initialize();
+  logger.info("Message storage service initialized");
+
   const analytics = new AnalyticsService(messageStorage, openai);
 
   // 配置需要统计的群组（从环境变量读取）
@@ -74,8 +79,14 @@ export const bootstrap = () => {
     );
 
     // 调用 DeepSeek AI 生成回复
-    const aiResponse = await chatWithDeepSeek(openai, event.raw_message);
-    await event.reply(aiResponse);
+    try {
+      // const aiResponse = await chatWithDeepSeek(openai, event.raw_message);
+      // await event.reply(aiResponse);
+      await event.reply("debug");
+    } catch (error) {
+      logger.error("调用 DeepSeek AI 失败:", error);
+      await event.reply("chat failed");
+    }
   });
 
   // 监听群消息中的@机器人（已合并到上面的消息处理中）
@@ -132,4 +143,30 @@ export const bootstrap = () => {
 
   // 启动机器人
   bot.start();
+
+  // 优雅关闭处理
+  const gracefulShutdown = async () => {
+    logger.info("正在优雅关闭应用...");
+    try {
+      // 注意: cron 任务会在进程结束时自动停止
+
+      // 保存最终数据状态
+      await messageStorage.forceCleanup();
+      logger.info("数据已保存");
+
+      // 关闭 Redis 连接
+      await redis.quit();
+      logger.info("Redis 连接已关闭");
+
+      process.exit(0);
+    } catch (error) {
+      logger.error("关闭时出错:", error);
+      process.exit(1);
+    }
+  };
+
+  // 监听关闭信号
+  process.on("SIGINT", gracefulShutdown);
+  process.on("SIGTERM", gracefulShutdown);
+  process.on("SIGQUIT", gracefulShutdown);
 };
