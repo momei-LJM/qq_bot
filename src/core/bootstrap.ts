@@ -1,6 +1,6 @@
 import OpenAI, { ClientOptions } from "openai";
 import { Bot, Client, ReceiverMode } from "qq-official-bot";
-import { chatWithDeepSeek } from "./ai";
+import { chatWithDeepSeekWithContext } from "./ai";
 import { getRedisClient } from "../services/redis.js";
 import { MessageStorageService } from "../services/message-storage.js";
 import { AnalyticsService } from "../services/analytics.js";
@@ -8,6 +8,7 @@ import { DailySummaryJob } from "../jobs/daily-summary.js";
 import { WeeklyStatsJob } from "../jobs/weekly-stats.js";
 import { logger } from "@/utils/logger";
 import { config } from "dotenv";
+const BOTID = "qqBot";
 config();
 const openAiConfig: ClientOptions = {
   apiKey: process.env.DEEPSEEK_API_KEY,
@@ -78,10 +79,30 @@ export const bootstrap = async () => {
       event.sender.user_id
     );
 
-    // 调用 DeepSeek AI 生成回复
+    // 调用 DeepSeek AI 生成回复（带历史上下文）
     try {
-      const aiResponse = await chatWithDeepSeek(openai, event.raw_message);
-      await event.reply(aiResponse);
+      const aiResponse = await chatWithDeepSeekWithContext(
+        openai,
+        event.raw_message,
+        event.group_id,
+        event.sender.user_id,
+        messageStorage,
+        10 // 获取最近10条相关消息作为上下文
+      );
+      await messageStorage.saveMessage({
+        message_id: event.message_id,
+        group_id: event.group_id,
+        user_id: BOTID,
+        user_name: "qq机器人",
+        raw_message: aiResponse,
+        timestamp: Date.now(),
+      });
+      await event.reply({
+        type: "text",
+        data: {
+          text: aiResponse,
+        },
+      });
     } catch (error) {
       logger.error("调用 DeepSeek AI 失败:", error);
       await event.reply("chat failed");
