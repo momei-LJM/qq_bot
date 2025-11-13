@@ -11,8 +11,8 @@ import { config } from "dotenv";
 const BOTID = "qqBot";
 config();
 const openAiConfig: ClientOptions = {
-  apiKey: process.env.DEEPSEEK_API_KEY,
-  baseURL: "https://api.deepseek.com",
+  apiKey: process.env.DOUBAO_API_KEY,
+  baseURL: process.env.BASE_URL,
   maxRetries: 5,
 };
 
@@ -62,7 +62,6 @@ export const bootstrap = async () => {
     console.log("收到群消息:", event.raw_message);
     console.log("群 ID:", event.group_id);
     console.log("发送者:", event.sender.user_id);
-
     // 存储消息到 Redis
     await messageStorage.saveMessage({
       message_id: event.message_id,

@@ -30,10 +30,11 @@ export async function chatWithDeepSeek(
     });
 
     const response = await openai.chat.completions.create({
-      model: "deepseek-chat",
+      model: "doubao-seed-1-6-lite-251015",
       messages,
       temperature: 0.7,
       max_tokens: 1000,
+      reasoning_effort: "medium",
     });
 
     return response.choices[0]?.message?.content || "抱歉,我暂时无法回复。";
