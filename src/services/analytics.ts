@@ -1,5 +1,5 @@
-import type OpenAI from "openai";
 import type { GroupMessage, MessageStorageService } from "./message-storage";
+import { ConfigurableModel } from "langchain/chat_models/universal";
 
 export interface UserStats {
   userId: string;
@@ -18,11 +18,11 @@ export interface DailySummary {
 
 export class AnalyticsService {
   private storage: MessageStorageService;
-  private openai: OpenAI;
+  private model: ConfigurableModel;
 
-  constructor(storage: MessageStorageService, openai: OpenAI) {
+  constructor(storage: MessageStorageService, model: ConfigurableModel) {
     this.storage = storage;
-    this.openai = openai;
+    this.model = model;
   }
 
   /**
@@ -86,9 +86,8 @@ export class AnalyticsService {
       .join("\n");
 
     try {
-      const response = await this.openai.chat.completions.create({
-        model: "deepseek-chat",
-        messages: [
+      const response = await this.model.invoke(
+        [
           {
             role: "system",
             content:
@@ -99,11 +98,10 @@ export class AnalyticsService {
             content: `请总结以下群聊内容：\n\n${messageText}`,
           },
         ],
-        temperature: 0.7,
-        max_tokens: 500,
-      });
+        {}
+      );
 
-      return response.choices[0]?.message?.content || "总结生成失败";
+      return (response.content as string) || "总结生成失败";
     } catch (error) {
       console.error("AI 总结生成失败:", error);
       return "AI 总结生成失败，请稍后重试";

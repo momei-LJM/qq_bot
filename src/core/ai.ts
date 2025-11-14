@@ -1,6 +1,6 @@
-import OpenAI from "openai";
 import { SYSTEMS } from "./systems";
 import type { MessageStorageService } from "../services/message-storage";
+import { ConfigurableModel } from "langchain/chat_models/universal";
 
 export interface ChatMessage {
   role: "user" | "assistant";
@@ -8,7 +8,7 @@ export interface ChatMessage {
 }
 
 export async function chatWithDeepSeek(
-  openai: OpenAI,
+  model: ConfigurableModel,
   message: string,
   historyMessages?: ChatMessage[]
 ): Promise<string> {
@@ -22,22 +22,14 @@ export async function chatWithDeepSeek(
       const limitedHistory = historyMessages.slice(-10);
       messages.push(...limitedHistory);
     }
-
     // 添加当前用户消息
     messages.push({
       role: "user",
       content: message,
     });
 
-    const response = await openai.chat.completions.create({
-      model: "doubao-seed-1-6-lite-251015",
-      messages,
-      temperature: 0.7,
-      max_tokens: 1000,
-      reasoning_effort: "medium",
-    });
-
-    return response.choices[0]?.message?.content || "抱歉,我暂时无法回复。";
+    const response = await model.invoke(messages);
+    return (response.content as string) || "抱歉,我暂时无法回复。";
   } catch (error) {
     console.error("DeepSeek API 调用失败:", error);
     return "抱歉,我遇到了一些问题,请稍后再试。";
@@ -49,7 +41,7 @@ export async function chatWithDeepSeek(
  * 自动从消息存储中获取最近的对话历史
  */
 export async function chatWithDeepSeekWithContext(
-  openai: OpenAI,
+  model: ConfigurableModel,
   message: string,
   groupId: string,
   userId: string,
@@ -80,10 +72,10 @@ export async function chatWithDeepSeekWithContext(
     // 限制历史消息数量
     const limitedHistory = historyMessages.slice(-contextCount);
 
-    return await chatWithDeepSeek(openai, message, limitedHistory);
+    return await chatWithDeepSeek(model, message, limitedHistory);
   } catch (error) {
     console.error("获取历史上下文失败，使用无上下文模式:", error);
     // 如果获取历史失败，回退到无上下文模式
-    return await chatWithDeepSeek(openai, message);
+    return await chatWithDeepSeek(model, message);
   }
 }

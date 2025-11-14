@@ -1,4 +1,3 @@
-import OpenAI, { ClientOptions } from "openai";
 import { Bot, Client, ReceiverMode } from "qq-official-bot";
 import { chatWithDeepSeekWithContext } from "./ai";
 import { getRedisClient } from "../services/redis.js";
@@ -8,13 +7,11 @@ import { DailySummaryJob } from "../jobs/daily-summary.js";
 import { WeeklyStatsJob } from "../jobs/weekly-stats.js";
 import { logger } from "@/utils/logger";
 import { config } from "dotenv";
+import { initChatModel } from "langchain";
+import z from "zod";
+import { MemorySaver } from "@langchain/langgraph";
 const BOTID = "qqBot";
 config();
-const openAiConfig: ClientOptions = {
-  apiKey: process.env.DOUBAO_API_KEY,
-  baseURL: process.env.BASE_URL,
-  maxRetries: 5,
-};
 
 const qBotConfig: Client.Config = {
   appid: process.env.APP_ID!, // QQ 机器人的 App ID
@@ -34,8 +31,21 @@ const qBotConfig: Client.Config = {
 };
 
 export const bootstrap = async () => {
-  logger.debug(JSON.stringify(process.env.DEEPSEEK_API_KEY));
-  const openai = new OpenAI(openAiConfig);
+  const model = await initChatModel("doubao-seed-1-6-lite-251015", {
+    temperature: 0.5,
+    timeout: 10,
+    maxTokens: 1000,
+    apiKey: process.env.DOUBAO_API_KEY,
+    baseURL: process.env.BASE_URL,
+    maxRetries: 5,
+    modelProvider: "openai",
+  });
+  // const responseFormat = z.object({
+  //   punny_response: z.string(),
+  //   weather_conditions: z.string().optional(),
+  // });
+  // const checkpointer = new MemorySaver();
+
   const bot = new Bot(qBotConfig);
   // 初始化 Redis 和服务
   const redis = getRedisClient();
@@ -43,9 +53,8 @@ export const bootstrap = async () => {
 
   // 初始化消息存储服务（从 JSON 文件加载数据）
   await messageStorage.initialize();
-  logger.info("Message storage service initialized");
 
-  const analytics = new AnalyticsService(messageStorage, openai);
+  const analytics = new AnalyticsService(messageStorage, model);
 
   // 配置需要统计的群组（从环境变量读取）
   const trackGroupIds = process.env.TRACK_GROUP_IDS?.split(",") || [];
@@ -56,7 +65,6 @@ export const bootstrap = async () => {
 
   const weeklyStatsJob = new WeeklyStatsJob(analytics, bot, trackGroupIds);
   weeklyStatsJob.start();
-
   // 监听群消息
   bot.on("message.group", async (event) => {
     console.log("收到群消息:", event.raw_message);
@@ -81,7 +89,7 @@ export const bootstrap = async () => {
     // 调用 DeepSeek AI 生成回复（带历史上下文）
     try {
       const aiResponse = await chatWithDeepSeekWithContext(
-        openai,
+        model,
         event.raw_message,
         event.group_id,
         event.sender.user_id,
@@ -162,6 +170,10 @@ export const bootstrap = async () => {
 
   // 启动机器人
   bot.start();
+  setTimeout(() => {
+    bot.sendGroupMessage("D814753662906EED4DE417571B5E8D2F", "主动发消息");
+    console.log("111xxx");
+  }, 3000);
 
   // 优雅关闭处理
   const gracefulShutdown = async () => {

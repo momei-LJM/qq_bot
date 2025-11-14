@@ -28,13 +28,76 @@
         "user_id": "E6B6FB64FB1D107F77FD4ECE86B1C2FE",
         "raw_message": " n",
         "timestamp": 1762941595667
+      },
+      {
+        "message_id": "ROBOT1.0_IQLxOOqDNgIz2-YEej24XFTzpVxgtxwvZqFP2H5iO-v2mt2fpRztUkS3LHPo1nn5UkxAGZGGGjOWZOajcElN9NWQm8UrBrT3IfnxMjAOIPk!",
+        "group_id": "D814753662906EED4DE417571B5E8D2F",
+        "user_id": "E6B6FB64FB1D107F77FD4ECE86B1C2FE",
+        "raw_message": " 1",
+        "timestamp": 1763118465312
+      },
+      {
+        "message_id": "ROBOT1.0_IQLxOOqDNgIz2-YEej24XFTzpVxgtxwvZqFP2H5iO-v2mt2fpRztUkS3LHPo1nn5UkxAGZGGGjOWZOajcElN9NWQm8UrBrT3IfnxMjAOIPk!",
+        "group_id": "D814753662906EED4DE417571B5E8D2F",
+        "user_id": "qqBot",
+        "user_name": "qq机器人",
+        "raw_message": "抱歉,我遇到了一些问题,请稍后再试。",
+        "timestamp": 1763118465321
+      },
+      {
+        "message_id": "ROBOT1.0_IQLxOOqDNgIz2-YEej24XKMs8cL4fhKiulowcLdfXKx7vlQQarvVcONBUc7FQFQRzPY9c0HRHxkAzrPyxKTnzwU.vBArytHKGHglHeYICBs!",
+        "group_id": "D814753662906EED4DE417571B5E8D2F",
+        "user_id": "E6B6FB64FB1D107F77FD4ECE86B1C2FE",
+        "raw_message": " 1+1",
+        "timestamp": 1763118497569
+      },
+      {
+        "message_id": "ROBOT1.0_IQLxOOqDNgIz2-YEej24XKMs8cL4fhKiulowcLdfXKx7vlQQarvVcONBUc7FQFQRzPY9c0HRHxkAzrPyxKTnzwU.vBArytHKGHglHeYICBs!",
+        "group_id": "D814753662906EED4DE417571B5E8D2F",
+        "user_id": "qqBot",
+        "user_name": "qq机器人",
+        "raw_message": "抱歉,我遇到了一些问题,请稍后再试。",
+        "timestamp": 1763118497577
+      },
+      {
+        "message_id": "ROBOT1.0_IQLxOOqDNgIz2-YEej24XHt7VFzIwvYoaMtbb2Qbwm.9PCuALte2Xo4WyInWB5XVVPr8OuGnk6viM22CRALmpdWQm8UrBrT3IfnxMjAOIPk!",
+        "group_id": "D814753662906EED4DE417571B5E8D2F",
+        "user_id": "E6B6FB64FB1D107F77FD4ECE86B1C2FE",
+        "raw_message": " 1+1",
+        "timestamp": 1763118651690
+      },
+      {
+        "message_id": "ROBOT1.0_IQLxOOqDNgIz2-YEej24XHt7VFzIwvYoaMtbb2Qbwm.9PCuALte2Xo4WyInWB5XVVPr8OuGnk6viM22CRALmpdWQm8UrBrT3IfnxMjAOIPk!",
+        "group_id": "D814753662906EED4DE417571B5E8D2F",
+        "user_id": "qqBot",
+        "user_name": "qq机器人",
+        "raw_message": "抱歉,我遇到了一些问题,请稍后再试。",
+        "timestamp": 1763118651697
+      },
+      {
+        "message_id": "ROBOT1.0_IQLxOOqDNgIz2-YEej24XPHlAzxV.4dS3jnPlC0IRqcctWBEpm3Juu1DCo4Cwg7NaYDInDrV9rdpxvxdwRd0VAU.vBArytHKGHglHeYICBs!",
+        "group_id": "D814753662906EED4DE417571B5E8D2F",
+        "user_id": "E6B6FB64FB1D107F77FD4ECE86B1C2FE",
+        "raw_message": " 1+1",
+        "timestamp": 1763119205687
+      },
+      {
+        "message_id": "ROBOT1.0_IQLxOOqDNgIz2-YEej24XPHlAzxV.4dS3jnPlC0IRqcctWBEpm3Juu1DCo4Cwg7NaYDInDrV9rdpxvxdwRd0VAU.vBArytHKGHglHeYICBs!",
+        "group_id": "D814753662906EED4DE417571B5E8D2F",
+        "user_id": "qqBot",
+        "user_name": "qq机器人",
+        "raw_message": "抱歉,我遇到了一些问题,请稍后再试。",
+        "timestamp": 1763119410672
       }
     ]
   },
   "stats": {
     "D814753662906EED4DE417571B5E8D2F:2025-11-12": {
       "E6B6FB64FB1D107F77FD4ECE86B1C2FE": 4
+    },
+    "D814753662906EED4DE417571B5E8D2F:2025-11-14": {
+      "E6B6FB64FB1D107F77FD4ECE86B1C2FE": 4
     }
   },
-  "lastCleanup": 1762941618617
+  "lastCleanup": 1763128101074
 }
