@@ -1,45 +1,56 @@
 import OpenAI from "openai";
 import { SYSTEMS } from "./systems";
 import type { MessageStorageService } from "../services/message-storage";
+import dayjs from "dayjs";
+import { BOTID } from "./bootstrap";
+import { GroupMessageEvent } from "qq-official-bot";
+import { saveMsgImmidiately } from "./handlers";
 
 export interface ChatMessage {
   role: "user" | "assistant";
   content: string;
 }
 
-export async function chatWithDeepSeek(
+export async function chat(
   openai: OpenAI,
   message: string,
+  messageStorage: MessageStorageService,
+  qBotEvent: GroupMessageEvent,
   historyMessages?: ChatMessage[]
-): Promise<string> {
+) {
   try {
-    // 构建消息数组
     const messages: any[] = [...SYSTEMS];
-
-    // 如果有历史消息，添加到对话中
-    if (historyMessages && historyMessages.length > 0) {
-      // 限制历史消息数量，避免 token 过多
-      const limitedHistory = historyMessages.slice(-10);
-      messages.push(...limitedHistory);
+    if (historyMessages?.length) {
+      messages.push(...historyMessages);
     }
-
     // 添加当前用户消息
     messages.push({
       role: "user",
       content: message,
     });
 
-    const response = await openai.chat.completions.create({
+    const aiResponse = await openai.chat.completions.create({
       model: "doubao-seed-1-6-lite-251015",
       messages,
       temperature: 0.7,
-      max_tokens: 1000,
-      reasoning_effort: "medium",
+      max_tokens: 2000,
+      reasoning_effort: "minimal",
     });
+    const responseMessage =
+      aiResponse.choices[0]?.message?.content || "抱歉,我暂时无法回复。";
+    await saveMsgImmidiately(messageStorage, {
+      ...qBotEvent,
+      sender: {
+        ...qBotEvent.sender,
+        user_name: "qq机器人",
+        user_id: BOTID,
+      },
+      raw_message: responseMessage,
+    } as GroupMessageEvent);
 
-    return response.choices[0]?.message?.content || "抱歉,我暂时无法回复。";
+    return responseMessage;
   } catch (error) {
-    console.error("DeepSeek API 调用失败:", error);
+    console.error("API 调用失败:", error);
     return "抱歉,我遇到了一些问题,请稍后再试。";
   }
 }
@@ -48,42 +59,51 @@ export async function chatWithDeepSeek(
  * 带历史上下文的 DeepSeek 聊天函数
  * 自动从消息存储中获取最近的对话历史
  */
-export async function chatWithDeepSeekWithContext(
+export async function chatWithContext(
   openai: OpenAI,
-  message: string,
-  groupId: string,
-  userId: string,
+  qBotEvent: GroupMessageEvent,
   messageStorage: MessageStorageService,
-  contextCount: number = 10
+  contextCount: number = 20
 ): Promise<string> {
+  const groupId = qBotEvent.group_id;
+  const message = qBotEvent.raw_message;
   try {
     // 获取最近的消息作为上下文
-    const recentMessages = await messageStorage.getRecentMessages(
-      groupId,
-      contextCount
-    );
+    const recentMessages = (
+      await messageStorage.getRecentMessages(groupId, contextCount)
+    ).map((i) => ({
+      userId: i.user_id,
+      raw_message: i.raw_message,
+      userName: i.user_name,
+      createTime: dayjs(i.timestamp).format("YYYY-MM-DD HH:mm:ss"),
+    }));
 
     // 转换为对话格式，只保留相关的用户对话
     const historyMessages: ChatMessage[] = [];
 
     for (const msg of recentMessages.reverse()) {
       // 跳过系统消息和太长的消息
-      if (msg.raw_message.length > 200) continue;
-
+      if (msg.raw_message.length > 500) continue;
       historyMessages.push({
-        role: "user",
-        content: msg.raw_message,
+        role: msg.userId === BOTID ? "assistant" : "user",
+        content: JSON.stringify(msg),
       });
-      // 如果有对应的 AI 回复，也可以添加（这里暂时跳过，因为需要识别 AI 消息）
     }
 
     // 限制历史消息数量
     const limitedHistory = historyMessages.slice(-contextCount);
-
-    return await chatWithDeepSeek(openai, message, limitedHistory);
+    // 保存当前用户消息
+    await saveMsgImmidiately(messageStorage, qBotEvent);
+    return await chat(
+      openai,
+      message,
+      messageStorage,
+      qBotEvent,
+      limitedHistory
+    );
   } catch (error) {
     console.error("获取历史上下文失败，使用无上下文模式:", error);
     // 如果获取历史失败，回退到无上下文模式
-    return await chatWithDeepSeek(openai, message);
+    return await chat(openai, message, messageStorage, qBotEvent);
   }
 }
